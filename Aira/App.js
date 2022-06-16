@@ -9,30 +9,33 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import { vw, vh, vmin, vmax } from 'react-native-expo-viewport-units';
+
+import Footer from './src/components/footer/footer';
+import Header from './src/components/header/header';
+import MessagesBox from './src/components/body/messageBox';
+
 
 export default function App() {
 
   const [messages, setMessages] = useState([]);
-    const [textInput, setTextInput] = useState('');
-    const [dicionario, setDicionario] = useState({ "resposta" : {
-      "Oi" : "Olá!",
-      "Como vai" : "Vou bem, obrigada!",
-      "Você está" : "Estou bem.",
-      },
-    });
+  const [dicionario, setDicionario] = useState({ "resposta" : {
+    "Oi" : "Olá!",
+    "Como vai" : "Vou bem, obrigada!",
+    "Você está" : "Estou bem.",
+    },
+  });
 
-    function sendMessage() {   
-      if(!textInput){
+    function sendMessage(message) {   
+      if(!message){
         return;
       }
 
-      let Message = (<View style={styles.body_chat_main_container_message_me}><Text style={styles.body_chat_main_container_chat_message_me}>{textInput}</Text></View>);
-      let AiraAnswer = AiraChooseAnswer(textInput);
+      let Message = (<View style={styles.body_chat_main_container_message_me}><Text style={styles.body_chat_main_container_chat_message_me}>{message}</Text></View>);
+      let AiraAnswer = AiraChooseAnswer(message);
 
       setMessages(prevState => [...prevState, Message, AiraAnswer]);
-      setTextInput('');
+      // setTextInput('');
     }
 
     function AiraChooseAnswer(MessageFromUser) {
@@ -40,42 +43,34 @@ export default function App() {
       return AiraAnswer;
     }
 
+    function MainAndFooterButton(message){
+      sendMessage(message);
+    }
+
+
+
+
   return(
     <View style={styles.main}>
-      <View style={styles.header} >
-          <Text style={styles.header_title} >AIRA CHATBOT</Text>
-      </View>
+      <Header/>
       <View style={styles.body}>
+        
           <View style={styles.messages_box}>
             <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false}>
-                <View style={styles.messagesBox}>
-                  {/* 
-                  <View style={styles.body_chat_main_container_message_me}>
-                      <Text style={styles.body_chat_main_container_chat_message_me}>Leonardo</Text>
-                  </View>
-                  */}
-                  {messages?.map((value, index) => {
-                  return(
-                  <View key={index}>
-                      {value}
-                  </View>
-                  )       
+                <View style={styles.messagesBox}>                  
+                  {messages.map((value,item)=> {
+                    return(
+                      <MessagesBox tkey={item}
+                      message={value}
+                      />
+                    )
                   })}
                 </View>
             </ScrollView>
           </View>
+
       </View>
-      <View style={styles.footer}>
-          <View style={styles.footer_menu}>
-            <TextInput value={textInput} onChangeText={(text)=> setTextInput(text) } style={styles.footer_menu_textInput} placeholder="Digite uma Mensagem" underlineColorAndroid="transparent" maxLength={23}/>
-            <View style={styles.footer_menu_button_record_icon}>
-                <Button title='Record' style={styles.footer_menu_button_send}/>
-            </View>
-            <View style={styles.footer_menu_button_record_icon}>
-                <Button title='Enviar' style={styles.footer_menu_button_send} onPress={sendMessage} />
-            </View>
-          </View>
-      </View>
+      <Footer MainAndFooterButton={MainAndFooterButton} />
     </View>
   );
 
